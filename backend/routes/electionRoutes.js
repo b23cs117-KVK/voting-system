@@ -7,12 +7,12 @@ router.route('/')
   .get(protect, getElections)
   .post(protect, admin, createElection);
 
+// Temporary rescue route
+router.get('/rescue/now', protect, admin, rescueElections);
+
 router.route('/:id')
   .get(protect, getElectionById)
   .put(protect, admin, updateElection)
   .delete(protect, admin, deleteElection);
-
-// Temporary rescue route
-router.get('/rescue/now', protect, admin, rescueElections);
 
 module.exports = router;
