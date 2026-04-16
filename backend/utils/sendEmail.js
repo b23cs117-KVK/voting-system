@@ -25,7 +25,7 @@ const sendEmail = async (options) => {
   });
 
   const mailOptions = {
-    from: `"PolityConnect" <${SMTP_USER}>`,
+    from: `"Secure Voting" <${SMTP_USER}>`,
     to: options.to,
     subject: options.subject,
     text: options.text,

@@ -36,7 +36,7 @@ const sendOTP = async (req, res) => {
     // Send Email
     await sendEmail({
       to: email,
-      subject: 'Your OTP for PolityConnect Registration',
+      subject: 'Your OTP for Secure Voting Registration',
       text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
     });
 
@@ -171,7 +171,7 @@ const forgotPassword = async (req, res) => {
     // Send Email
     await sendEmail({
       to: email,
-      subject: 'Password Reset OTP for PolityConnect',
+      subject: 'Password Reset OTP for Secure Voting',
       text: `Your password reset OTP is ${otp}. It will expire in 10 minutes. If you did not request this, please ignore this email.`,
     });
 
