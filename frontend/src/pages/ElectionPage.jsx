@@ -125,45 +125,45 @@ const ElectionPage = () => {
   const showResults = user.role === 'admin' || !election.isActive || hasVoted;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8 px-4">
       {/* Election Header */}
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 text-center relative overflow-hidden">
-        <div className={`absolute top-0 left-0 w-full h-1.5 ${election.isActive ? 'bg-emerald-500' : 'bg-slate-300'}`}></div>
-        <h1 className="text-3xl font-bold text-slate-800 mb-4">{election.title}</h1>
-        <p className="text-lg text-slate-600 mb-6">{election.description}</p>
-        <div className="inline-flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-lg border border-slate-100">
-          <span className="text-sm font-medium text-slate-500">Status:</span>
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-200 dark:border-slate-700 text-center relative overflow-hidden transition-colors">
+        <div className={`absolute top-0 left-0 w-full h-1.5 ${election.isActive ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}></div>
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">{election.title}</h1>
+        <p className="text-lg text-slate-600 dark:text-slate-400 mb-6">{election.description}</p>
+        <div className="inline-flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 px-4 py-2 rounded-lg border border-slate-100 dark:border-slate-800">
+          <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Status:</span>
           {election.isActive ? (
-            <span className="text-emerald-700 font-bold flex items-center gap-1">
+            <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Active
             </span>
           ) : (
-            <span className="text-slate-600 font-bold">Ended</span>
+            <span className="text-slate-600 dark:text-slate-300 font-bold">Ended</span>
           )}
         </div>
       </div>
 
       {user.role === 'voter' && !hasVoted && election.isActive && (
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 text-center">
-          <h3 className="text-xl font-bold text-blue-800 mb-2">Cast Your Vote</h3>
-          <p className="text-blue-600 mb-6">Select a candidate below and submit your vote. You cannot change it later.</p>
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 text-center">
+          <h3 className="text-xl font-bold text-blue-800 dark:text-blue-300 mb-2">Cast Your Vote</h3>
+          <p className="text-blue-600 dark:text-blue-400 mb-6 font-medium">Select a candidate below and submit your vote. You cannot change it later.</p>
         </div>
       )}
 
       {user.role === 'voter' && hasVoted && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center flex flex-col items-center justify-center">
-          <CheckCircle className="w-12 h-12 text-emerald-500 mb-3" />
-          <h3 className="text-2xl font-bold text-emerald-800 mb-2">Vote Recorded</h3>
-          <p className="text-emerald-600">Thank you for participating. Your vote is secure.</p>
+        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-6 text-center flex flex-col items-center justify-center">
+          <CheckCircle className="w-12 h-12 text-emerald-500 dark:text-emerald-400 mb-3" />
+          <h3 className="text-2xl font-bold text-emerald-800 dark:text-emerald-300 mb-2">Vote Recorded</h3>
+          <p className="text-emerald-600 dark:text-emerald-400 font-medium">Thank you for participating. Your vote is secure.</p>
         </div>
       )}
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* Candidates List Form */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
             Candidates
-            <span className="text-sm font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+            <span className="text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-full border dark:border-slate-700">
               {candidates.length}
             </span>
           </h2>
@@ -176,12 +176,12 @@ const ElectionPage = () => {
               return (
                 <div 
                   key={candidate._id} 
-                  className={`bg-white rounded-xl border p-5 transition-all
+                  className={`bg-white dark:bg-slate-800 rounded-xl border p-5 transition-all
                     ${user.role === 'voter' && !hasVoted && election.isActive 
                       ? selectedCandidate === candidate._id 
-                        ? 'border-blue-500 shadow-md ring-2 ring-blue-500/20' 
-                        : 'border-slate-200 hover:border-blue-300 cursor-pointer hover:shadow-md'
-                      : 'border-slate-200 shadow-sm'
+                        ? 'border-blue-500 shadow-md ring-2 ring-blue-500/20 dark:ring-blue-400/20 bg-blue-50/30' 
+                        : 'border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-900 cursor-pointer hover:shadow-md'
+                      : 'border-slate-200 dark:border-slate-700 shadow-sm'
                     }
                   `}
                   onClick={() => {
@@ -192,20 +192,20 @@ const ElectionPage = () => {
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-lg font-bold text-slate-800">{candidate.name}</h3>
-                      <p className="text-sm text-slate-500 mt-1">{candidate.description}</p>
+                      <h3 className="text-lg font-bold text-slate-800 dark:text-white">{candidate.name}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{candidate.description}</p>
                     </div>
                     {user.role === 'admin' && (
                       <div className="flex gap-2">
                         <button 
                           onClick={(e) => { e.stopPropagation(); handleEditClick(candidate); }}
-                          className="text-blue-500 hover:text-blue-700 bg-blue-50 p-2 rounded-lg transition-colors"
+                          className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/30 p-2 rounded-lg transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={(e) => { e.stopPropagation(); handleDeleteCandidate(candidate._id); }}
-                          className="text-rose-500 hover:text-rose-700 bg-rose-50 p-2 rounded-lg transition-colors"
+                          className="text-rose-500 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 bg-rose-50 dark:bg-rose-900/30 p-2 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -213,22 +213,22 @@ const ElectionPage = () => {
                     )}
                     {user.role === 'voter' && !hasVoted && election.isActive && (
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-1 
-                        ${selectedCandidate === candidate._id ? 'border-blue-600' : 'border-slate-300'}
+                        ${selectedCandidate === candidate._id ? 'border-blue-600 dark:border-blue-400' : 'border-slate-300 dark:border-slate-600'}
                       `}>
-                        {selectedCandidate === candidate._id && <div className="w-2.5 h-2.5 rounded-full bg-blue-600"></div>}
+                        {selectedCandidate === candidate._id && <div className="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-blue-400"></div>}
                       </div>
                     )}
                   </div>
 
                   {showResults && result !== undefined && (
-                    <div className="mt-5 pt-4 border-t border-slate-100">
+                    <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
                       <div className="flex justify-between text-sm font-medium mb-1.5">
-                        <span className="text-slate-600">Votes: {result.votes}</span>
-                        <span className="text-slate-800">{votePercentage.toFixed(1)}%</span>
+                        <span className="text-slate-600 dark:text-slate-400">Votes: {result.votes}</span>
+                        <span className="text-slate-800 dark:text-slate-200">{votePercentage.toFixed(1)}%</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden flex">
+                      <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 overflow-hidden flex">
                         <div 
-                          className="bg-blue-500 h-2 rounded-full transition-all duration-1000 ease-out" 
+                          className="bg-blue-500 dark:bg-blue-400 h-2 rounded-full transition-all duration-1000 ease-out" 
                           style={{ width: `${votePercentage}%` }}
                         ></div>
                       </div>
@@ -239,8 +239,8 @@ const ElectionPage = () => {
             })}
             
             {candidates.length === 0 && (
-              <div className="text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed">
-                <p className="text-slate-500">No candidates available yet.</p>
+              <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed">
+                <p className="text-slate-500 dark:text-slate-400">No candidates available yet.</p>
               </div>
             )}
           </div>
@@ -249,7 +249,7 @@ const ElectionPage = () => {
             <button
               onClick={handleVote}
               disabled={!selectedCandidate}
-              className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all"
+              className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all"
             >
               Confirm Vote
             </button>
@@ -259,31 +259,31 @@ const ElectionPage = () => {
         {/* Action Panel: Admin Add / Status */}
         <div className="space-y-6">
           {user.role === 'admin' ? (
-            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 sticky top-24">
-              <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 sticky top-24">
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                 {editingCandidate ? (
-                  <Edit className="w-5 h-5 text-blue-600" />
+                  <Edit className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 ) : (
-                  <Plus className="w-5 h-5 text-blue-600" />
+                  <Plus className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 )}
                 {editingCandidate ? 'Edit Candidate' : 'Add Candidate'}
               </h3>
               <form onSubmit={handleAddCandidate} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
                   <input
                     type="text"
                     required
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-white outline-none transition-all"
                     value={newCandidateName}
                     onChange={(e) => setNewCandidateName(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Platform / Description</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Platform / Description</label>
                   <textarea
                     rows="3"
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-white outline-none transition-all"
                     value={newCandidateDesc}
                     onChange={(e) => setNewCandidateDesc(e.target.value)}
                   ></textarea>
@@ -291,7 +291,7 @@ const ElectionPage = () => {
                 <div className="flex gap-2">
                   <button
                     type="submit"
-                    className="flex-grow bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-lg transition-colors"
+                    className="flex-grow bg-slate-800 dark:bg-slate-900 hover:bg-slate-900 dark:hover:bg-black text-white font-semibold py-2.5 rounded-lg transition-colors border dark:border-slate-700"
                   >
                     {editingCandidate ? 'Update Candidate' : 'Save Candidate'}
                   </button>
@@ -303,7 +303,7 @@ const ElectionPage = () => {
                         setNewCandidateName('');
                         setNewCandidateDesc('');
                       }}
-                      className="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition-colors"
+                      className="px-4 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-lg transition-colors"
                     >
                       Cancel
                     </button>
@@ -313,12 +313,12 @@ const ElectionPage = () => {
             </div>
           ) : (
              showResults && (
-              <div className="bg-slate-800 text-white rounded-2xl p-6 border border-slate-700 sticky top-24">
+              <div className="bg-slate-800 dark:bg-slate-950 text-white rounded-2xl p-6 border border-slate-700 dark:border-slate-800 sticky top-24 shadow-xl">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <BarChart2 className="w-5 h-5 text-blue-400" />
                   Turnout Summary
                 </h3>
-                <div className="text-center py-6 bg-slate-900 rounded-xl">
+                <div className="text-center py-6 bg-slate-900 dark:bg-slate-900/50 rounded-xl border border-slate-700/50">
                   <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
                     {results?.totalVotes || 0}
                   </div>

@@ -45,22 +45,22 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center py-10">
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-slate-800 mb-2">
+    <div className="flex justify-center items-center py-10 px-4">
+      <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 w-full max-w-md transition-colors">
+        <h2 className="text-3xl font-bold text-center text-slate-800 dark:text-white mb-2">
           {step === 1 ? 'Create an Account' : 'Verify Email'}
         </h2>
-        <p className="text-center text-slate-500 mb-8 text-sm">
+        <p className="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">
           {step === 1 ? 'Join the secure voting platform.' : `Enter the 6-digit code sent to ${email}`}
         </p>
 
         {step === 1 ? (
           <form onSubmit={handleSendOTP} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Full Name</label>
               <input
                 type="text"
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -68,10 +68,10 @@ const Register = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email Address</label>
               <input
                 type="email"
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -79,10 +79,10 @@ const Register = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Password</label>
               <input
                 type="password"
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -91,16 +91,16 @@ const Register = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Role</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Role</label>
               <select
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
               >
-                <option value="voter">Voter</option>
-                <option value="admin">Admin</option>
+                <option value="voter" className="dark:bg-slate-900">Voter</option>
+                <option value="admin" className="dark:bg-slate-900">Admin</option>
               </select>
-              <p className="text-xs text-slate-500 mt-1">Note: In a real app, Admin registration would be restricted.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Note: In a real app, Admin registration would be restricted.</p>
             </div>
             <button
               type="submit"
@@ -113,11 +113,11 @@ const Register = () => {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2 text-center">Enter 6-digit OTP</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 text-center">Enter 6-digit OTP</label>
               <input
                 type="text"
                 maxLength={6}
-                className="w-full px-4 py-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-center text-2xl tracking-[1em] font-mono"
+                className="w-full px-4 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-center text-2xl tracking-[1em] font-mono"
                 placeholder="000000"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
@@ -134,7 +134,7 @@ const Register = () => {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="w-full text-slate-600 hover:text-slate-800 font-medium py-2 rounded-lg transition-colors"
+                className="w-full text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium py-2 rounded-lg transition-colors"
               >
                 Back to Details
               </button>
@@ -142,9 +142,9 @@ const Register = () => {
           </form>
         )}
 
-        <p className="mt-6 text-center text-slate-600">
+        <p className="mt-6 text-center text-slate-600 dark:text-slate-400">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 font-medium hover:underline">
+          <Link to="/login" className="text-blue-600 dark:text-blue-400 font-medium hover:underline">
             Sign in
           </Link>
         </p>

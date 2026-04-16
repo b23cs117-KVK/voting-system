@@ -39,25 +39,25 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-[80vh]">
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-slate-800 mb-2 text-center">Set New Password</h2>
-        <p className="text-slate-600 mb-8 text-center text-sm">
-          A reset code was sent to <span className="font-semibold">{email}</span>
+    <div className="flex justify-center items-center h-[80vh] px-4">
+      <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 w-full max-w-md transition-colors">
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2 text-center">Set New Password</h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-8 text-center text-sm">
+          A reset code was sent to <span className="font-semibold text-slate-800 dark:text-slate-200">{email}</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Reset Code (OTP)</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Reset Code (OTP)</label>
             <div className="relative">
-              <span className="absolute left-3 top-3.5 text-slate-400">
+              <span className="absolute left-3 top-3.5 text-slate-400 dark:text-slate-500">
                 <KeyRound className="w-5 h-5" />
               </span>
               <input
                 type="text"
                 required
                 maxLength="6"
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all tracking-[0.5em] text-center font-bold"
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all tracking-[0.5em] text-center font-bold"
                 placeholder="000000"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
@@ -66,15 +66,15 @@ const ResetPassword = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">New Password</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">New Password</label>
             <div className="relative">
-              <span className="absolute left-3 top-3.5 text-slate-400">
+              <span className="absolute left-3 top-3.5 text-slate-400 dark:text-slate-500">
                 <Lock className="w-5 h-5" />
               </span>
               <input
                 type="password"
                 required
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 placeholder="••••••••"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -83,11 +83,11 @@ const ResetPassword = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Confirm New Password</label>
             <input
               type="password"
               required
-              className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

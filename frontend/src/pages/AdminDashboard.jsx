@@ -98,11 +98,11 @@ const AdminDashboard = () => {
   if (loading) return <div className="text-center py-20">Loading...</div>;
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto px-4">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Admin Dashboard</h1>
-          <p className="text-slate-600 mt-1">Manage elections, candidates, and view results.</p>
+          <h1 className="text-3xl font-bold text-slate-800 dark:text-white">Admin Dashboard</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">Manage elections, candidates, and view results.</p>
         </div>
         <button
           onClick={() => { setIsEditMode(false); setShowCreateModal(true); }}
@@ -113,36 +113,36 @@ const AdminDashboard = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm uppercase tracking-wider">
+              <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-sm uppercase tracking-wider">
                 <th className="p-4 font-semibold">Election Title</th>
                 <th className="p-4 font-semibold">Status</th>
                 <th className="p-4 font-semibold">Date Range</th>
                 <th className="p-4 font-semibold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {elections.map((election) => (
-                <tr key={election._id} className="hover:bg-slate-50 transition-colors">
+                <tr key={election._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
                   <td className="p-4">
-                    <div className="font-medium text-slate-800">{election.title}</div>
-                    <div className="text-sm text-slate-500 truncate max-w-xs">{election.description}</div>
+                    <div className="font-medium text-slate-800 dark:text-white">{election.title}</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-400 truncate max-w-xs">{election.description}</div>
                   </td>
                   <td className="p-4">
                     {election.isActive ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400">
                         Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-300">
                         Inactive
                       </span>
                     )}
                   </td>
-                  <td className="p-4 text-sm text-slate-600">
+                  <td className="p-4 text-sm text-slate-600 dark:text-slate-400">
                     <div className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4" />
                       <span>{new Date(election.startDate).toLocaleDateString()} - {new Date(election.endDate).toLocaleDateString()}</span>
@@ -151,15 +151,15 @@ const AdminDashboard = () => {
                   <td className="p-4 text-right space-x-3">
                     <button
                       onClick={() => handleEditClick(election)}
-                      className="text-blue-600 hover:text-blue-800 transition-colors"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
                       title="Edit"
                     >
                       <Edit3 className="w-5 h-5 inline" />
                     </button>
-                    <button className="text-indigo-600 hover:text-indigo-800 transition-colors" title="Manage Candidates" onClick={() => window.location.href=`/elections/${election._id}`}>
+                    <button className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors" title="Manage Candidates" onClick={() => window.location.href=`/elections/${election._id}`}>
                       <Users className="w-5 h-5 inline" />
                     </button>
-                    <button onClick={() => handleDelete(election._id)} className="text-rose-600 hover:text-rose-800 transition-colors" title="Delete">
+                    <button onClick={() => handleDelete(election._id)} className="text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 transition-colors" title="Delete">
                       <Trash2 className="w-5 h-5 inline" />
                     </button>
                   </td>
@@ -167,7 +167,7 @@ const AdminDashboard = () => {
               ))}
               {elections.length === 0 && (
                 <tr>
-                  <td colSpan="4" className="p-8 text-center text-slate-500">
+                  <td colSpan="4" className="p-8 text-center text-slate-500 dark:text-slate-400">
                     No elections found. Create one to get started.
                   </td>
                 </tr>
@@ -179,58 +179,58 @@ const AdminDashboard = () => {
 
       {/* Create/Edit Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl p-6 relative">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6">
+        <div className="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-lg shadow-2xl p-6 relative border border-slate-200 dark:border-slate-700">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">
               {isEditMode ? 'Edit Election' : 'Create New Election'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title</label>
                 <input
                   type="text"
                   required
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-white outline-none transition-all"
                   value={newElection.title}
                   onChange={(e) => setNewElection({...newElection, title: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
                 <textarea
                   rows="3"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-white outline-none transition-all"
                   value={newElection.description}
                   onChange={(e) => setNewElection({...newElection, description: e.target.value})}
                 ></textarea>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Start Date</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Start Date</label>
                   <input
                     type="datetime-local"
                     required
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-white outline-none transition-all"
                     value={newElection.startDate}
                     onChange={(e) => setNewElection({...newElection, startDate: e.target.value})}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">End Date</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">End Date</label>
                   <input
                     type="datetime-local"
                     required
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-white outline-none transition-all"
                     value={newElection.endDate}
                     onChange={(e) => setNewElection({...newElection, endDate: e.target.value})}
                   />
                 </div>
               </div>
-              <div className="flex justify-end space-x-3 mt-8 pt-4 border-t border-slate-100">
+              <div className="flex justify-end space-x-3 mt-8 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-5 py-2 text-slate-600 hover:bg-slate-100 font-medium rounded-lg transition-colors"
+                  className="px-5 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 font-medium rounded-lg transition-colors"
                 >
                   Cancel
                 </button>

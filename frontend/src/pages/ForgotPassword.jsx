@@ -24,30 +24,30 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-[80vh]">
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 w-full max-w-md">
+    <div className="flex justify-center items-center h-[80vh] px-4">
+      <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 w-full max-w-md transition-colors">
         <div className="flex items-center gap-2 mb-6">
-          <Link to="/login" className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-            <ArrowLeft className="w-5 h-5 text-slate-600" />
+          <Link to="/login" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+            <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
           </Link>
-          <h2 className="text-2xl font-bold text-slate-800">Forgot Password</h2>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Forgot Password</h2>
         </div>
         
-        <p className="text-slate-600 mb-8">
+        <p className="text-slate-600 dark:text-slate-400 mb-8">
           Enter your registered email address and we'll send you an OTP to reset your password.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email Address</label>
             <div className="relative">
-              <span className="absolute left-3 top-3.5 text-slate-400">
+              <span className="absolute left-3 top-3.5 text-slate-400 dark:text-slate-500">
                 <Mail className="w-5 h-5" />
               </span>
               <input
                 type="email"
                 required
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
