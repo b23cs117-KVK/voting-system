@@ -9,14 +9,24 @@ export const AuthProvider = ({ children }) => {
 
   // Configure axios defaults
   axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-  axios.defaults.withCredentials = true;
 
   useEffect(() => {
     const fetchUser = async () => {
+      const storedToken = localStorage.getItem('token');
+      if (!storedToken) {
+        setLoading(false);
+        return;
+      }
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+
       try {
         const { data } = await axios.get('/api/auth/me');
         setUser(data);
       } catch (error) {
+        console.error(error);
+        localStorage.removeItem('token');
+        delete axios.defaults.headers.common['Authorization'];
         setUser(null);
       } finally {
         setLoading(false);
@@ -27,19 +37,29 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await axios.post('/api/auth/login', { email, password });
+    localStorage.setItem('token', data.token);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     setUser(data);
     return data;
   };
 
   const register = async (name, email, password, role) => {
     const { data } = await axios.post('/api/auth/register', { name, email, password, role });
+    localStorage.setItem('token', data.token);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     setUser(data);
     return data;
   };
 
   const logout = async () => {
-    await axios.post('/api/auth/logout');
+    localStorage.removeItem('token');
+    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
+    try {
+      await axios.post('/api/auth/logout');
+    } catch(err) {
+      // ignore
+    }
   };
 
   return (

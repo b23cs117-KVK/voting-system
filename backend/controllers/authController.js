@@ -3,18 +3,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 // Generate JWT
-const generateToken = (res, userId) => {
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+const generateToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: '30d',
-  });
-
-  const isProduction = process.env.NODE_ENV === 'production';
-
-  res.cookie('jwt', token, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'none' : 'strict',
-    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 };
 
@@ -38,16 +29,16 @@ const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: role || 'voter', // Default to voter, though typically admin creates admins
+      role: role || 'voter',
     });
 
     if (user) {
-      generateToken(res, user._id);
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        token: generateToken(user._id),
       });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
@@ -67,12 +58,12 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      generateToken(res, user._id);
       res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        token: generateToken(user._id),
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -82,18 +73,10 @@ const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Logout user / clear cookie
+// @desc    Logout user
 // @route   POST /api/auth/logout
 // @access  Public
 const logoutUser = (req, res) => {
-  const isProduction = process.env.NODE_ENV === 'production';
-  
-  res.cookie('jwt', '', {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'none' : 'strict',
-    expires: new Date(0),
-  });
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
@@ -109,6 +92,8 @@ const getUserProfile = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      // Keep token alive on refresh if needed
+      token: req.headers.authorization.split(' ')[1],
     });
   } else {
     res.status(404).json({ message: 'User not found' });
