@@ -28,7 +28,13 @@ const AdminDashboard = () => {
   const handleCreateElection = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/elections', newElection);
+      // Convert to ISO strings to preserve the user's local timezone intended time
+      const electionData = {
+        ...newElection,
+        startDate: new Date(newElection.startDate).toISOString(),
+        endDate: new Date(newElection.endDate).toISOString(),
+      };
+      await axios.post('/api/elections', electionData);
       toast.success('Election created successfully');
       setShowCreateModal(false);
       setNewElection({ title: '', description: '', startDate: '', endDate: '' });
