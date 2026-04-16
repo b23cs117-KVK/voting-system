@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getElections, getElectionById, createElection, updateElection, deleteElection } = require('../controllers/electionController');
+const { getElections, getElectionById, createElection, updateElection, deleteElection, rescueElections } = require('../controllers/electionController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')
