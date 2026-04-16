@@ -1,4 +1,7 @@
 const User = require('../models/User');
+const Election = require('../models/Election');
+const Candidate = require('../models/Candidate');
+const Vote = require('../models/Vote');
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -28,8 +31,23 @@ const deleteUser = async (req, res) => {
       return res.status(400).json({ message: 'You cannot delete yourself' });
     }
 
+    // CASCADE DELETE: If Admin, delete their elections and related data
+    if (user.role === 'admin') {
+      const elections = await Election.find({ createdBy: user._id });
+      const electionIds = elections.map(e => e._id);
+
+      // 1. Delete all votes linked to these elections
+      await Vote.deleteMany({ election: { $in: electionIds } });
+
+      // 2. Delete all candidates linked to these elections
+      await Candidate.deleteMany({ election: { $in: electionIds } });
+
+      // 3. Delete the elections themselves
+      await Election.deleteMany({ createdBy: user._id });
+    }
+
     await user.deleteOne();
-    res.json({ message: 'User removed successfully' });
+    res.json({ message: 'User and all associated data removed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

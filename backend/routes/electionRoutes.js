@@ -12,4 +12,7 @@ router.route('/:id')
   .put(protect, admin, updateElection)
   .delete(protect, admin, deleteElection);
 
+// Temporary rescue route
+router.get('/rescue/now', protect, admin, rescueElections);
+
 module.exports = router;

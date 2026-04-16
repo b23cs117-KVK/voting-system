@@ -8,9 +8,11 @@ const getElections = async (req, res) => {
     let query = {};
     
     // If Admin, only show their own elections
-    // If Voter, show all (or add voter-specific filtering if needed)
+    // If Voter, only show elections that have a valid creator
     if (req.user && req.user.role === 'admin') {
       query.createdBy = req.user._id;
+    } else {
+      query.createdBy = { $exists: true, $ne: null };
     }
 
     const elections = await Election.find(query).sort({ createdAt: -1 });
@@ -110,8 +112,32 @@ const deleteElection = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to delete this election' });
     }
 
-    await election.deleteOne();
-    res.json({ message: 'Election removed' });
+// @desc    Rescue orphaned elections (Assign to current admin)
+// @route   GET /api/elections/rescue
+// @access  Private/Admin
+const rescueElections = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const adminId = req.user._id;
+
+    // Find all elections that don't have a valid owner
+    const elections = await Election.find();
+    let updatedCount = 0;
+
+    for (const election of elections) {
+      const ownerExists = election.createdBy ? await User.exists({ _id: election.createdBy }) : false;
+      
+      if (!ownerExists) {
+        election.createdBy = adminId;
+        await election.save();
+        updatedCount++;
+      }
+    }
+
+    res.json({ 
+      message: `Rescue successful! ${updatedCount} elections have been assigned to you.`,
+      updatedCount 
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -123,4 +149,5 @@ module.exports = {
   createElection,
   updateElection,
   deleteElection,
+  rescueElections,
 };

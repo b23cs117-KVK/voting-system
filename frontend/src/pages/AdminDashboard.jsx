@@ -240,8 +240,24 @@ const AdminDashboard = () => {
                 ))}
                 {elections.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="p-20 text-center text-slate-500 dark:text-slate-400">
-                      No elections found.
+                    <td colSpan="4" className="p-20 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-4">
+                        <p className="text-slate-500 dark:text-slate-400">No elections found assigned to you.</p>
+                        <button
+                          onClick={async () => {
+                            try {
+                              const { data } = await axios.get('/api/elections/rescue/now');
+                              toast.success(data.message);
+                              fetchData();
+                            } catch (error) {
+                              toast.error('Rescue failed');
+                            }
+                          }}
+                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                        >
+                          Rescue Missing Elections
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )}
