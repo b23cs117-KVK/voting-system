@@ -56,8 +56,32 @@ const deleteCandidate = async (req, res) => {
   }
 };
 
+// @desc    Update a candidate
+// @route   PUT /api/candidates/:id
+// @access  Private/Admin
+const updateCandidate = async (req, res) => {
+  const { name, description } = req.body;
+
+  try {
+    const candidate = await Candidate.findById(req.params.id);
+
+    if (candidate) {
+      candidate.name = name || candidate.name;
+      candidate.description = description || candidate.description;
+
+      const updatedCandidate = await candidate.save();
+      res.json(updatedCandidate);
+    } else {
+      res.status(404).json({ message: 'Candidate not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getCandidates,
   addCandidate,
+  updateCandidate,
   deleteCandidate,
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getCandidates, addCandidate, deleteCandidate } = require('../controllers/candidateController');
+const { getCandidates, addCandidate, updateCandidate, deleteCandidate } = require('../controllers/candidateController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')
@@ -10,6 +10,7 @@ router.route('/:electionId')
   .get(protect, getCandidates);
 
 router.route('/:id')
+  .put(protect, admin, updateCandidate)
   .delete(protect, admin, deleteCandidate);
 
 module.exports = router;

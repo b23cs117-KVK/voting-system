@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../context/AuthContext';
-import { Plus, Trash2, CheckCircle, BarChart2 } from 'lucide-react';
+import { Plus, Trash2, CheckCircle, BarChart2, Edit } from 'lucide-react';
 
 const ElectionPage = () => {
   const { id } = useParams();
@@ -19,6 +19,7 @@ const ElectionPage = () => {
   // Admin state
   const [newCandidateName, setNewCandidateName] = useState('');
   const [newCandidateDesc, setNewCandidateDesc] = useState('');
+  const [editingCandidate, setEditingCandidate] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -56,18 +57,35 @@ const ElectionPage = () => {
   const handleAddCandidate = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/candidates', {
-        name: newCandidateName,
-        description: newCandidateDesc,
-        electionId: id
-      });
-      toast.success('Candidate added');
+      if (editingCandidate) {
+        await axios.put(`/api/candidates/${editingCandidate._id}`, {
+          name: newCandidateName,
+          description: newCandidateDesc
+        });
+        toast.success('Candidate updated');
+        setEditingCandidate(null);
+      } else {
+        await axios.post('/api/candidates', {
+          name: newCandidateName,
+          description: newCandidateDesc,
+          electionId: id
+        });
+        toast.success('Candidate added');
+      }
       setNewCandidateName('');
       setNewCandidateDesc('');
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to add candidate');
+      toast.error(error.response?.data?.message || 'Failed to save candidate');
     }
+  };
+
+  const handleEditClick = (candidate) => {
+    setEditingCandidate(candidate);
+    setNewCandidateName(candidate.name);
+    setNewCandidateDesc(candidate.description);
+    // Scroll to form (optional but helpful)
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   };
 
   const handleDeleteCandidate = async (candidateId) => {
@@ -178,12 +196,20 @@ const ElectionPage = () => {
                       <p className="text-sm text-slate-500 mt-1">{candidate.description}</p>
                     </div>
                     {user.role === 'admin' && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleDeleteCandidate(candidate._id); }}
-                        className="text-rose-500 hover:text-rose-700 bg-rose-50 p-2 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleEditClick(candidate); }}
+                          className="text-blue-500 hover:text-blue-700 bg-blue-50 p-2 rounded-lg transition-colors"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleDeleteCandidate(candidate._id); }}
+                          className="text-rose-500 hover:text-rose-700 bg-rose-50 p-2 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     )}
                     {user.role === 'voter' && !hasVoted && election.isActive && (
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-1 
@@ -235,8 +261,12 @@ const ElectionPage = () => {
           {user.role === 'admin' ? (
             <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 sticky top-24">
               <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <Plus className="w-5 h-5 text-blue-600" />
-                Add Candidate
+                {editingCandidate ? (
+                  <Edit className="w-5 h-5 text-blue-600" />
+                ) : (
+                  <Plus className="w-5 h-5 text-blue-600" />
+                )}
+                {editingCandidate ? 'Edit Candidate' : 'Add Candidate'}
               </h3>
               <form onSubmit={handleAddCandidate} className="space-y-4">
                 <div>
@@ -258,12 +288,27 @@ const ElectionPage = () => {
                     onChange={(e) => setNewCandidateDesc(e.target.value)}
                   ></textarea>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-lg transition-colors"
-                >
-                  Save Candidate
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    className="flex-grow bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 rounded-lg transition-colors"
+                  >
+                    {editingCandidate ? 'Update Candidate' : 'Save Candidate'}
+                  </button>
+                  {editingCandidate && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingCandidate(null);
+                        setNewCandidateName('');
+                        setNewCandidateDesc('');
+                      }}
+                      className="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
           ) : (
