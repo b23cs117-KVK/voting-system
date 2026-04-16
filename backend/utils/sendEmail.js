@@ -27,17 +27,25 @@ const sendEmail = async (options) => {
     const otpMatch = options.text.match(/\d{6}/);
     const otp = otpMatch ? otpMatch[0] : options.text;
 
-    await axios.post('https://api.emailjs.com/api/v1.0/email/send', {
-      service_id: EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_TEMPLATE_ID,
-      user_id: EMAILJS_PUBLIC_KEY,
-      accessToken: EMAILJS_PRIVATE_KEY,
-      template_params: {
-        to_email: options.to,
-        otp: otp,
-        message: options.text, // Fallback if they use {{message}}
+    await axios.post(
+      'https://api.emailjs.com/api/v1.0/email/send',
+      {
+        service_id: EMAILJS_SERVICE_ID,
+        template_id: EMAILJS_TEMPLATE_ID,
+        user_id: EMAILJS_PUBLIC_KEY,
+        accessToken: EMAILJS_PRIVATE_KEY,
+        template_params: {
+          to_email: options.to,
+          otp: otp,
+          message: options.text,
+        },
       },
-    });
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     console.log(`OTP Email sent via EmailJS to ${options.to}`);
   } catch (error) {
     console.error('EmailJS Error:', error.response?.data || error.message);
