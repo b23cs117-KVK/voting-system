@@ -16,7 +16,6 @@ const generateToken = (userId) => {
 // @access  Public
 const sendOTP = async (req, res) => {
   const { email } = req.body;
-  console.log('>>> INCOMING OTP REQUEST FOR:', email);
 
   try {
     const userExists = await User.findOne({ email });
