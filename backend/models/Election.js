@@ -16,6 +16,11 @@ const electionSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 }, { timestamps: true });
 
 // Virtual to determine if election is active

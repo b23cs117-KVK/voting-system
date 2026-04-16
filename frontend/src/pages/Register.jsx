@@ -101,18 +101,6 @@ const Register = () => {
                 </button>
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Role</label>
-              <select
-                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-              >
-                <option value="voter" className="dark:bg-slate-900">Voter</option>
-                <option value="admin" className="dark:bg-slate-900">Admin</option>
-              </select>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Note: In a real app, Admin registration would be restricted.</p>
-            </div>
             <button
               type="submit"
               disabled={sendingOTP}

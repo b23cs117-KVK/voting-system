@@ -2,10 +2,18 @@ const Election = require('../models/Election');
 
 // @desc    Get all elections
 // @route   GET /api/elections
-// @access  Public (or Private to voters/admins)
+// @access  Private
 const getElections = async (req, res) => {
   try {
-    const elections = await Election.find().sort({ createdAt: -1 });
+    let query = {};
+    
+    // If Admin, only show their own elections
+    // If Voter, show all (or add voter-specific filtering if needed)
+    if (req.user && req.user.role === 'admin') {
+      query.createdBy = req.user._id;
+    }
+
+    const elections = await Election.find(query).sort({ createdAt: -1 });
     res.json(elections);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -14,15 +22,21 @@ const getElections = async (req, res) => {
 
 // @desc    Get single election
 // @route   GET /api/elections/:id
-// @access  Public
+// @access  Private
 const getElectionById = async (req, res) => {
   try {
     const election = await Election.findById(req.params.id);
-    if (election) {
-      res.json(election);
-    } else {
-      res.status(404).json({ message: 'Election not found' });
+    
+    if (!election) {
+      return res.status(404).json({ message: 'Election not found' });
     }
+
+    // Permission check for Admins
+    if (req.user.role === 'admin' && election.createdBy && election.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to access this election' });
+    }
+
+    res.json(election);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -40,6 +54,7 @@ const createElection = async (req, res) => {
       description,
       startDate,
       endDate,
+      createdBy: req.user._id, // Set the owner
     });
 
     const createdElection = await election.save();
@@ -58,17 +73,22 @@ const updateElection = async (req, res) => {
   try {
     const election = await Election.findById(req.params.id);
 
-    if (election) {
-      election.title = title || election.title;
-      election.description = description || election.description;
-      election.startDate = startDate || election.startDate;
-      election.endDate = endDate || election.endDate;
-
-      const updatedElection = await election.save();
-      res.json(updatedElection);
-    } else {
-      res.status(404).json({ message: 'Election not found' });
+    if (!election) {
+      return res.status(404).json({ message: 'Election not found' });
     }
+
+    // Ownership check
+    if (election.createdBy && election.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to update this election' });
+    }
+
+    election.title = title || election.title;
+    election.description = description || election.description;
+    election.startDate = startDate || election.startDate;
+    election.endDate = endDate || election.endDate;
+
+    const updatedElection = await election.save();
+    res.json(updatedElection);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -81,12 +101,17 @@ const deleteElection = async (req, res) => {
   try {
     const election = await Election.findById(req.params.id);
 
-    if (election) {
-      await election.deleteOne();
-      res.json({ message: 'Election removed' });
-    } else {
-      res.status(404).json({ message: 'Election not found' });
+    if (!election) {
+      return res.status(404).json({ message: 'Election not found' });
     }
+
+    // Ownership check
+    if (election.createdBy && election.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to delete this election' });
+    }
+
+    await election.deleteOne();
+    res.json({ message: 'Election removed' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
