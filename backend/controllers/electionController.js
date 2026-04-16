@@ -6,18 +6,17 @@ const User = require('../models/User');
 // @access  Private
 const getElections = async (req, res) => {
   try {
-    let query = {};
-    
-    // If Admin, only show their own elections
-    // If Voter, only show elections that have a valid creator
     if (req.user && req.user.role === 'admin') {
-      query.createdBy = req.user._id;
+      // Admins only see their own elections
+      const elections = await Election.find({ createdBy: req.user._id }).sort({ createdAt: -1 });
+      return res.json(elections);
     } else {
-      query.createdBy = { $exists: true, $ne: null };
+      // Voters: only show elections whose creator STILL EXISTS in the DB
+      const validAdmins = await User.find({ role: 'admin' }).select('_id');
+      const validAdminIds = validAdmins.map(u => u._id);
+      const elections = await Election.find({ createdBy: { $in: validAdminIds } }).sort({ createdAt: -1 });
+      return res.json(elections);
     }
-
-    const elections = await Election.find(query).sort({ createdAt: -1 });
-    res.json(elections);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -120,29 +119,25 @@ const cleanupOrphans = async (req, res) => {
   try {
     console.log('Starting Orphan Cleanup operation...');
     
-    // 1. Delete elections that literally have no createdBy field
-    const missingFieldResult = await Election.deleteMany({ createdBy: { $exists: false } });
-    console.log(`Deleted ${missingFieldResult.deletedCount} elections with missing createdBy field.`);
+    // Find all valid admin user IDs
+    const validAdmins = await User.find({}).select('_id');
+    const validAdminIds = validAdmins.map(u => u._id.toString());
 
-    // 2. Resolve existing elections and check if their owners still exist
     const elections = await Election.find();
-    let crossReferenceDeleted = 0;
+    let removed = 0;
 
     for (const election of elections) {
-      if (election.createdBy) {
-        const ownerExists = await User.exists({ _id: election.createdBy });
-        if (!ownerExists) {
-          console.log(`Removing orphaned election: "${election.title}" (Original owner deleted)`);
-          // Note: In a real app we'd also delete candidates/votes here
-          await Election.deleteOne({ _id: election._id });
-          crossReferenceDeleted++;
-        }
+      const hasValidOwner = election.createdBy && validAdminIds.includes(election.createdBy.toString());
+      if (!hasValidOwner) {
+        console.log(`Removing orphaned election: "${election.title}"`);
+        await Election.deleteOne({ _id: election._id });
+        removed++;
       }
     }
 
     res.json({ 
-      message: `System Cleaned! Removed ${missingFieldResult.deletedCount + crossReferenceDeleted} orphaned elections.`,
-      totalRemoved: missingFieldResult.deletedCount + crossReferenceDeleted
+      message: `System Cleaned! Removed ${removed} orphaned elections.`,
+      totalRemoved: removed
     });
   } catch (error) {
     console.error('Cleanup Error:', error);
