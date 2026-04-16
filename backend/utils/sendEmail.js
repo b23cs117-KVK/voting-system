@@ -3,7 +3,14 @@ const axios = require('axios');
 const sendEmail = async (options) => {
   const { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY, EMAILJS_PRIVATE_KEY } = process.env;
 
-  // If no EmailJS credentials, log to console for simulation
+  console.log('--- EmailJS Key Diagnostic ---');
+  console.log('Service ID Length:', EMAILJS_SERVICE_ID?.length || 0);
+  console.log('Template ID Length:', EMAILJS_TEMPLATE_ID?.length || 0);
+  console.log('Public Key Length:', EMAILJS_PUBLIC_KEY?.length || 0);
+  console.log('Private Key Length:', EMAILJS_PRIVATE_KEY?.length || 0);
+  console.log('------------------------------');
+
+  // If any EmailJS credentials are empty or missing, log to console for simulation
   if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY || !EMAILJS_PRIVATE_KEY) {
     console.log('-------------------------------------------');
     console.log('SIMULATED EMAIL SEND (EmailJS keys missing)');
