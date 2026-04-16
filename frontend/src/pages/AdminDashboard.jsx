@@ -8,6 +8,8 @@ const AdminDashboard = () => {
   const [elections, setElections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [newElection, setNewElection] = useState({ title: '', description: '', startDate: '', endDate: '' });
 
   const fetchElections = async () => {
@@ -25,22 +27,59 @@ const AdminDashboard = () => {
     fetchElections();
   }, []);
 
-  const handleCreateElection = async (e) => {
+  // Helper to format Date for <input type="datetime-local">
+  const formatDateForInput = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const handleEditClick = (election) => {
+    setEditingId(election._id);
+    setNewElection({
+      title: election.title,
+      description: election.description || '',
+      startDate: formatDateForInput(election.startDate),
+      endDate: formatDateForInput(election.endDate),
+    });
+    setIsEditMode(true);
+    setShowCreateModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowCreateModal(false);
+    setIsEditMode(false);
+    setEditingId(null);
+    setNewElection({ title: '', description: '', startDate: '', endDate: '' });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       // Convert to ISO strings to preserve the user's local timezone intended time
       const electionData = {
-        ...newElection,
+        title: newElection.title,
+        description: newElection.description,
         startDate: new Date(newElection.startDate).toISOString(),
         endDate: new Date(newElection.endDate).toISOString(),
       };
-      await axios.post('/api/elections', electionData);
-      toast.success('Election created successfully');
-      setShowCreateModal(false);
-      setNewElection({ title: '', description: '', startDate: '', endDate: '' });
+
+      if (isEditMode) {
+        await axios.put(`/api/elections/${editingId}`, electionData);
+        toast.success('Election updated successfully');
+      } else {
+        await axios.post('/api/elections', electionData);
+        toast.success('Election created successfully');
+      }
+
+      handleCloseModal();
       fetchElections();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create election');
+      toast.error(error.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} election`);
     }
   };
 
@@ -66,7 +105,7 @@ const AdminDashboard = () => {
           <p className="text-slate-600 mt-1">Manage elections, candidates, and view results.</p>
         </div>
         <button
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => { setIsEditMode(false); setShowCreateModal(true); }}
           className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
         >
           <Plus className="w-5 h-5" />
@@ -110,7 +149,11 @@ const AdminDashboard = () => {
                     </div>
                   </td>
                   <td className="p-4 text-right space-x-3">
-                    <button className="text-blue-600 hover:text-blue-800 transition-colors" title="Edit">
+                    <button
+                      onClick={() => handleEditClick(election)}
+                      className="text-blue-600 hover:text-blue-800 transition-colors"
+                      title="Edit"
+                    >
                       <Edit3 className="w-5 h-5 inline" />
                     </button>
                     <button className="text-indigo-600 hover:text-indigo-800 transition-colors" title="Manage Candidates" onClick={() => window.location.href=`/elections/${election._id}`}>
@@ -134,12 +177,14 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Create Modal */}
+      {/* Create/Edit Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl p-6 relative">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6">Create New Election</h2>
-            <form onSubmit={handleCreateElection} className="space-y-4">
+            <h2 className="text-2xl font-bold text-slate-800 mb-6">
+              {isEditMode ? 'Edit Election' : 'Create New Election'}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
                 <input
@@ -184,7 +229,7 @@ const AdminDashboard = () => {
               <div className="flex justify-end space-x-3 mt-8 pt-4 border-t border-slate-100">
                 <button
                   type="button"
-                  onClick={() => setShowCreateModal(false)}
+                  onClick={handleCloseModal}
                   className="px-5 py-2 text-slate-600 hover:bg-slate-100 font-medium rounded-lg transition-colors"
                 >
                   Cancel
@@ -193,7 +238,7 @@ const AdminDashboard = () => {
                   type="submit"
                   className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm"
                 >
-                  Create Election
+                  {isEditMode ? 'Save Changes' : 'Create Election'}
                 </button>
               </div>
             </form>
