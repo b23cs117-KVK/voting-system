@@ -29,13 +29,15 @@ const ElectionPage = () => {
       setElection(electionRes.data);
       setCandidates(candidatesRes.data);
 
+      let userHasVoted = false;
       if (user.role === 'voter') {
         const votedRes = await axios.get(`/api/votes/check/${id}`);
-        setHasVoted(votedRes.data.hasVoted);
+        userHasVoted = votedRes.data.hasVoted;
+        setHasVoted(userHasVoted);
       }
 
       // Fetch results if election has ended or if admin or if user has voted
-      if (user.role === 'admin' || !electionRes.data.isActive || hasVoted) {
+      if (user.role === 'admin' || !electionRes.data.isActive || userHasVoted) {
         const resultsRes = await axios.get(`/api/votes/results/${id}`);
         setResults(resultsRes.data);
       }

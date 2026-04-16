@@ -1,6 +1,7 @@
 const Vote = require('../models/Vote');
 const Election = require('../models/Election');
 const Candidate = require('../models/Candidate');
+const mongoose = require('mongoose');
 
 // @desc    Cast a vote
 // @route   POST /api/votes
@@ -54,7 +55,7 @@ const getResults = async (req, res) => {
 
     // Aggregate votes per candidate
     const results = await Vote.aggregate([
-      { $match: { election: require('mongoose').Types.ObjectId(electionId) } },
+      { $match: { election: new mongoose.Types.ObjectId(electionId) } },
       { $group: { _id: '$candidate', count: { $sum: 1 } } }
     ]);
 
