@@ -56,7 +56,7 @@ const createElection = async (req, res) => {
       description,
       startDate,
       endDate,
-      createdBy: req.user._id, // Set the owner
+      createdBy: req.user._id,
     });
 
     const createdElection = await election.save();
@@ -79,7 +79,6 @@ const updateElection = async (req, res) => {
       return res.status(404).json({ message: 'Election not found' });
     }
 
-    // Ownership check
     if (election.createdBy && election.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to update this election' });
     }
@@ -107,19 +106,22 @@ const deleteElection = async (req, res) => {
       return res.status(404).json({ message: 'Election not found' });
     }
 
-    // Ownership check
     if (election.createdBy && election.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to delete this election' });
     }
 
-// @desc    Cleanup orphaned elections (Delete elections with no valid owner)
+    await election.deleteOne();
+    res.json({ message: 'Election removed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Cleanup orphaned elections
 // @route   GET /api/elections/rescue/now
 // @access  Private/Admin
-const cleanupOrphans = async (req, res) => {
+const rescueElections = async (req, res) => {
   try {
-    console.log('Starting Orphan Cleanup operation...');
-    
-    // Find all valid admin user IDs
     const validAdmins = await User.find({}).select('_id');
     const validAdminIds = validAdmins.map(u => u._id.toString());
 
@@ -129,18 +131,16 @@ const cleanupOrphans = async (req, res) => {
     for (const election of elections) {
       const hasValidOwner = election.createdBy && validAdminIds.includes(election.createdBy.toString());
       if (!hasValidOwner) {
-        console.log(`Removing orphaned election: "${election.title}"`);
         await Election.deleteOne({ _id: election._id });
         removed++;
       }
     }
 
-    res.json({ 
+    res.json({
       message: `System Cleaned! Removed ${removed} orphaned elections.`,
-      totalRemoved: removed
+      totalRemoved: removed,
     });
   } catch (error) {
-    console.error('Cleanup Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -151,5 +151,5 @@ module.exports = {
   createElection,
   updateElection,
   deleteElection,
-  rescueElections: cleanupOrphans, // Keep name for route compatibility
+  rescueElections,
 };
