@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const sendOTP = async (email) => {
+    console.log('>>> SENDING OTP TO:', axios.defaults.baseURL + '/api/auth/send-otp');
     await axios.post('/api/auth/send-otp', { email });
   };
 
