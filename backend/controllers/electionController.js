@@ -1,4 +1,5 @@
 const Election = require('../models/Election');
+const User = require('../models/User');
 
 // @desc    Get all elections
 // @route   GET /api/elections
@@ -113,32 +114,37 @@ const deleteElection = async (req, res) => {
     }
 
 // @desc    Rescue orphaned elections (Assign to current admin)
-// @route   GET /api/elections/rescue
+// @route   GET /api/elections/rescue/now
 // @access  Private/Admin
 const rescueElections = async (req, res) => {
   try {
-    const User = require('../models/User');
     const adminId = req.user._id;
+    console.log(`Starting rescue operation for admin: ${adminId}`);
 
-    // Find all elections that don't have a valid owner
     const elections = await Election.find();
+    console.log(`Found ${elections.length} total elections to check.`);
+    
     let updatedCount = 0;
 
     for (const election of elections) {
+      // Check if creator exists
       const ownerExists = election.createdBy ? await User.exists({ _id: election.createdBy }) : false;
       
       if (!ownerExists) {
+        console.log(`Rescuing orphaned election: "${election.title}"`);
         election.createdBy = adminId;
         await election.save();
         updatedCount++;
       }
     }
 
+    console.log(`Rescue operation finished. Updated ${updatedCount} elections.`);
     res.json({ 
       message: `Rescue successful! ${updatedCount} elections have been assigned to you.`,
       updatedCount 
     });
   } catch (error) {
+    console.error('Rescue Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
