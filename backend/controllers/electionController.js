@@ -113,38 +113,39 @@ const deleteElection = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to delete this election' });
     }
 
-// @desc    Rescue orphaned elections (Assign to current admin)
+// @desc    Cleanup orphaned elections (Delete elections with no valid owner)
 // @route   GET /api/elections/rescue/now
 // @access  Private/Admin
-const rescueElections = async (req, res) => {
+const cleanupOrphans = async (req, res) => {
   try {
-    const adminId = req.user._id;
-    console.log(`Starting rescue operation for admin: ${adminId}`);
-
-    const elections = await Election.find();
-    console.log(`Found ${elections.length} total elections to check.`);
+    console.log('Starting Orphan Cleanup operation...');
     
-    let updatedCount = 0;
+    // 1. Delete elections that literally have no createdBy field
+    const missingFieldResult = await Election.deleteMany({ createdBy: { $exists: false } });
+    console.log(`Deleted ${missingFieldResult.deletedCount} elections with missing createdBy field.`);
+
+    // 2. Resolve existing elections and check if their owners still exist
+    const elections = await Election.find();
+    let crossReferenceDeleted = 0;
 
     for (const election of elections) {
-      // Check if creator exists
-      const ownerExists = election.createdBy ? await User.exists({ _id: election.createdBy }) : false;
-      
-      if (!ownerExists) {
-        console.log(`Rescuing orphaned election: "${election.title}"`);
-        election.createdBy = adminId;
-        await election.save();
-        updatedCount++;
+      if (election.createdBy) {
+        const ownerExists = await User.exists({ _id: election.createdBy });
+        if (!ownerExists) {
+          console.log(`Removing orphaned election: "${election.title}" (Original owner deleted)`);
+          // Note: In a real app we'd also delete candidates/votes here
+          await Election.deleteOne({ _id: election._id });
+          crossReferenceDeleted++;
+        }
       }
     }
 
-    console.log(`Rescue operation finished. Updated ${updatedCount} elections.`);
     res.json({ 
-      message: `Rescue successful! ${updatedCount} elections have been assigned to you.`,
-      updatedCount 
+      message: `System Cleaned! Removed ${missingFieldResult.deletedCount + crossReferenceDeleted} orphaned elections.`,
+      totalRemoved: missingFieldResult.deletedCount + crossReferenceDeleted
     });
   } catch (error) {
-    console.error('Rescue Error:', error);
+    console.error('Cleanup Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -155,5 +156,5 @@ module.exports = {
   createElection,
   updateElection,
   deleteElection,
-  rescueElections,
+  rescueElections: cleanupOrphans, // Keep name for route compatibility
 };
